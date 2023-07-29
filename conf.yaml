@@ -1,0 +1,29 @@
+data_dir: '/home/ubuntu/dataset/cosiancd '
+experiment_name: 'singing technique classification'
+length: 3.0
+f_max: 8000
+n_fft: 2048 # about 0.48sec
+hop_length: 441  # 0.01sec
+win_length: [2048,1024,512]
+sr: 44100
+input_feature: 'mel' # allow['mel', 'stft']
+model_arch: 'v3' # allow ['v3','dcn','musicnn'] 
+epoch: 100
+batch_size: 64
+optimizer: 'adam'
+normalization: 'instance' # "batch", "layer", "instance"
+lr: 1e-3
+random_seed: 15213
+model_path: './models'
+detection_threshold: 0.5
+early_stop: True
+loss: 'ce' # allow CE, ALA
+multi_res: 3
+activation: "relu"
+conv_dropout: 0.1
+layer_num: 4
+kernel_size: [3, 3, 3, 3]
+stride: [1, 1, 1, 1]
+filters: [32, 64, 128, 256]
+pooling: [4,4,2,2]
+n_mels: 160

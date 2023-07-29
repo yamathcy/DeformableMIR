@@ -1,0 +1,6 @@
+timm
+natten
+pytorch
+pytorch_lightning
+librosa 
+einops
