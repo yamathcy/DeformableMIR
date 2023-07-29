@@ -33,7 +33,7 @@ class CNN(nn.Module):
         self.norm = nn.InstanceNorm2d(50)
         self.out_nl = nn.ReLU()
         self.dropout = nn.Dropout()
-        self.act = nn.Linear(50, num_classes)
+        self.classifier = nn.Linear(50, num_classes)
     
     def forward(self,x):
         """_summary_
