@@ -78,7 +78,7 @@ def embed_visualize(dataset, plot_title, target_class_inv, mode='umap'):
     mlflow.log_artifact("tsne_{}.png".format(plot_title))
 
 
-def evaluation_wandb(logger:WandbLogger, model, plot_title, random_state, target_class, target_class_inv, retrain_loader=None,retrain=False, epoch=10, SSL=False):
+def evaluation_wandb(logger:WandbLogger, test_loader, model, plot_title, random_state, target_class, target_class_inv, retrain_loader=None,retrain=False, epoch=10, SSL=False):
     feature_vecs = []
     pred = []
     pre_prob = []
@@ -97,6 +97,20 @@ def evaluation_wandb(logger:WandbLogger, model, plot_title, random_state, target
         fe_trainer.fit(model, retrain_loader)
     model.eval()
     print("embed")
+
+    for sig, la in tqdm(test_loader):
+        sig = sig.to("cuda")
+
+        la = int(la)
+        model = model.to("cuda")
+        _ , feature = model(sig)
+        feature = feature.detach().cpu().numpy().copy()
+        out = model.predict(sig)
+        prob= model.predict_proba(sig)
+        pred.append(out)
+        pre_prob.append(prob)
+        label.append(la)
+        feature_vecs.append(feature)
 
     pred = np.array(pred)
     pre_prob = np.array(pre_prob)

@@ -71,6 +71,7 @@ def main(param):
         drop_last=True, num_workers=4)
     macrof1, accuracy, balanced, top_2, top_3, df_cmx, report = evaluation_wandb(logger,
     plot_title="singing technique classification",
+    test_loader=test_loader,
     model=model,
       random_state=2023,
       retrain=param.retrain,
