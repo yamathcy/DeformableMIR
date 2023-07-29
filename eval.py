@@ -93,7 +93,7 @@ def evaluation_wandb(logger:WandbLogger, test_loader, model, plot_title, random_
         model.retrain=True
         # model.train()
         fe_trainer = pl.Trainer(max_epochs=epoch,precision=32)
-        model.configure_optimizers(lr=1e-5)
+        model.lr=1e-5
         fe_trainer.fit(model, retrain_loader)
     model.eval()
     print("embed")
