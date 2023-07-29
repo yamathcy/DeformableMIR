@@ -21,12 +21,22 @@ from eval import *
 
 
 @hydra.main(config_name='config')
-def main(param: Config):
+def main(param):
+    SEED = 2023
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    # torch.use_deterministic_algorithms(True)   # :bug it arises an unexpected bug of pytorch 
+    pl.seed_everything(SEED)
+    np.random.seed(SEED)
 
     # Logging
     logger = WandbLogger(name=param.experiment_name, project="Singing technique classification")
     logger.log_hyperparams(param)
     print(hydra.utils.get_original_cwd())
+
+    dir = hydra.utils.get_original_cwd() + "/mlruns"
+    if not os.path.exists(dir):
+        os.makedirs(dir)
 
     print('load train_dataset...')
     audio_path = os.path.join(param.data_dir, "audio")
@@ -70,3 +80,5 @@ def main(param: Config):
     #     pass
     logger.log_metrics({"acc":accuracy, "bacc":balanced, "top2":top_2, "top3":top_3, "f1":macrof1})
     
+if __name__ == "__main__":
+    main()
