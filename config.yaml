@@ -21,6 +21,7 @@ loss: 'ce' # allow CE, ALA
 multi_res: 3
 activation: "relu"
 backend_classifier: "nn"
+class_num: 10
 conv_dropout: 0.1
 layer_num: 4
 kernel_size: [3, 3, 3, 3]
