@@ -122,8 +122,10 @@ def evaluation_wandb(logger:WandbLogger, model, plot_title, random_state, target
     #     pre_prob = clf.predict_proba(dump_test_data[0])
     #     label = dump_test_data[1]
     #     feature_vecs = dump_test_data[0]
-    
-    embed_visualize((feature_vecs, label), plot_title, target_class_inv)
+    try:
+        embed_visualize((feature_vecs, label), plot_title, target_class_inv)
+    except:
+        pass
     accuracy = accuracy_score(y_true=label, y_pred=pred)
     balanced = balanced_accuracy_score(y_true=label, y_pred=pred)
     top_2 = top_k_accuracy_score(k=2,y_score=pre_prob, y_true=label)
@@ -161,16 +163,5 @@ def evaluation_wandb(logger:WandbLogger, model, plot_title, random_state, target
         print("Top-3:{:.3f}".format(top_3),file=f)
         print("f1-score: {:.3f}".format(macrof1))
         print(report, file=f)
-        try:
-            lw = model.get_layer_weight()
-            print(lw,file=f)
-            print("written layer weights")
-            plt.plot(lw)
-            plt.tight_layout()
-            plt.savefig("layer_weight.png")
-            # mlflow.log_artifact('layer_weight.png')
-        except:
-            print("weight failed")
-            pass
     
     return macrof1, accuracy, balanced, top_2, top_3, df_cmx, report_dict
