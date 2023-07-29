@@ -2,3 +2,4 @@
 *.wav
 \.history
 \__pycache__
+\data
