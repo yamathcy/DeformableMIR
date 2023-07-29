@@ -34,7 +34,7 @@ def main(param):
     logger.log_hyperparams(param)
     print(hydra.utils.get_original_cwd())
 
-    dir = hydra.utils.get_original_cwd() + "/mlruns"
+    dir = hydra.utils.get_original_cwd()
     if not os.path.exists(dir):
         os.makedirs(dir)
 
