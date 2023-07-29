@@ -151,7 +151,7 @@ class PlModel(pl.LightningModule):
         self.eval()
         out, _ = self.forward(x)
         print(out.shape)
-        out = torch.argmax(out, dim=1)
+        out = torch.argmax(out, dim=0)
         out = out.cpu().detach().numpy().copy()
         # out = np.squeeze(out)
         return out
