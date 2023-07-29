@@ -69,11 +69,15 @@ def main(param):
     model.eval()
     feature_loader = torch.utils.data.DataLoader(train_dataset, batch_size=1, shuffle=False,
         drop_last=True, num_workers=4)
-    macrof1, accuracy, balanced, top_2, top_3, df_cmx, report = evaluation_wandb(logger,feature_loader,
-    test_loader, 
-    "singing technique classification",
-    param.backend_classifier,
-    model, 2023, param.class_num, class_weights, retrain=param.retrain,epoch=10, retrain_loader=train_loader, target_class=train_dataset.class2id, target_class_inv=train_dataset.id2class)
+    macrof1, accuracy, balanced, top_2, top_3, df_cmx, report = evaluation_wandb(logger,
+    plot_title="singing technique classification",
+    model=model,
+      random_state=2023,
+      retrain=param.retrain,
+      epoch=10, 
+      retrain_loader=train_loader, 
+      target_class=train_dataset.class2id, 
+      target_class_inv=train_dataset.id2class)
     # try:   
     #     mlflow.log_artifact(plot_title + "_result.txt")
     # except:

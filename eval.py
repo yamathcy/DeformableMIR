@@ -78,65 +78,50 @@ def embed_visualize(dataset, plot_title, target_class_inv, mode='umap'):
     mlflow.log_artifact("tsne_{}.png".format(plot_title))
 
 
-def evaluation_wandb(logger:WandbLogger, model, train_loader, test_loader, plot_title, classfier_method, random_state, target_class, target_class_inv, retrain_loader=None,retrain=False, epoch=10, SSL=False):
-    if classfier_method=='nn': 
-        feature_vecs = []
-        pred = []
-        pre_prob = []
-        label = []
-        if retrain:
-            # retrain 
-            print(model.children())
-            for params in model.parameters():
-                params.requires_grad = False
-            model.output.weight.requires_grad = True
-            model.output.bias.requires_grad = True
-            model.retrain=True
-            # model.train()
-            fe_trainer = pl.Trainer(max_epochs=10,precision=32)
-            model.configure_optimizers(lr=1e-5)
-            fe_trainer.fit(model, retrain_loader)
-        model.eval()
-        print("embed")
-        for sig, la, _ in tqdm(test_loader):
-            with torch.no_grad():
-                #print(sig.shape)
-                sig = sig.to(DEVICE)
-                la = int(la)
-                model.to(DEVICE)
-                feature = model.get_feature(sig)
-                feature = feature.detach().cpu().numpy().copy()
-                out = model.predict(sig)
-                prob= model.predict_proba(sig)
-                pred.append(out)
-                pre_prob.append(prob)
-                label.append(la)
-                feature_vecs.append(feature)
+def evaluation_wandb(logger:WandbLogger, model, plot_title, random_state, target_class, target_class_inv, retrain_loader=None,retrain=False, epoch=10, SSL=False):
+    feature_vecs = []
+    pred = []
+    pre_prob = []
+    label = []
+    if retrain:
+        # retrain 
+        print(model.children())
+        for params in model.parameters():
+            params.requires_grad = False
+        model.output.weight.requires_grad = True
+        model.output.bias.requires_grad = True
+        model.retrain=True
+        # model.train()
+        fe_trainer = pl.Trainer(max_epochs=epoch,precision=32)
+        model.configure_optimizers(lr=1e-5)
+        fe_trainer.fit(model, retrain_loader)
+    model.eval()
+    print("embed")
 
-        pred = np.array(pred)
-        pre_prob = np.array(pre_prob)
-        label = np.array(label)
-        # todo: delete
-        #pred = model.predict_classes(test_data[0])
-        #pre_prob = model.predict_proba(test_data[0])
+    pred = np.array(pred)
+    pre_prob = np.array(pre_prob)
+    label = np.array(label)
+    # todo: delete
+    #pred = model.predict_classes(test_data[0])
+    #pre_prob = model.predict_proba(test_data[0])
 
-    else:
-        dump_train_data = deep_feature_dump(train_loader, model)
-        dump_test_data = deep_feature_dump(test_loader, model)
-        print('non-deep backend')
-        if classfier_method == 'randomforest':
-            clf = BalancedRandomForestClassifier(class_weight='balanced',random_state=2023, n_jobs=-1, n_estimators=100)
+    # else:
+    #     dump_train_data = deep_feature_dump(train_loader, model)
+    #     dump_test_data = deep_feature_dump(test_loader, model)
+    #     print('non-deep backend')
+    #     if classfier_method == 'randomforest':
+    #         clf = BalancedRandomForestClassifier(class_weight='balanced',random_state=2023, n_jobs=-1, n_estimators=100)
 
-        elif classfier_method == 'svm':
-            clf = SVC(class_weight='balanced', probability=True)
-        clf.fit(dump_train_data[0], dump_train_data[1])
+    #     elif classfier_method == 'svm':
+    #         clf = SVC(class_weight='balanced', probability=True)
+    #     clf.fit(dump_train_data[0], dump_train_data[1])
         
-        # fit on train_data[0] : data, train_data[1]: label
-        # predict on test data
-        pred = clf.predict(dump_test_data[0])
-        pre_prob = clf.predict_proba(dump_test_data[0])
-        label = dump_test_data[1]
-        feature_vecs = dump_test_data[0]
+    #     # fit on train_data[0] : data, train_data[1]: label
+    #     # predict on test data
+    #     pred = clf.predict(dump_test_data[0])
+    #     pre_prob = clf.predict_proba(dump_test_data[0])
+    #     label = dump_test_data[1]
+    #     feature_vecs = dump_test_data[0]
     
     embed_visualize((feature_vecs, label), plot_title, target_class_inv)
     accuracy = accuracy_score(y_true=label, y_pred=pred)
