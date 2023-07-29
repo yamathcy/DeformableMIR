@@ -56,11 +56,11 @@ def main(param):
 
     # train
     print("start training...")
-    model.train()
     class_weights = train_dataset.get_class_weights(alpha=param.alpha)
     class_weights = [float(x) for x in class_weights.values()] 
     class_weights = torch.from_numpy(np.array(class_weights)).float()
     model =PlModel(param=param,classes_num=10,class_weights=class_weights)
+    model.train()
 
     early_stop_callback = EarlyStopping(monitor="val_loss", min_delta=0.00, patience=5, verbose=False, mode="min")
     trainer = pl.Trainer(max_epochs=param.epoch, default_root_dir='data/models/',precision=32, check_val_every_n_epoch=5, logger=logger, callbacks=[early_stop_callback])
