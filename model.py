@@ -26,8 +26,8 @@ class CNN(nn.Module):
         self.conv1 = ConvBlock(in_channels=3, out_channels=channels[0],kernel_size=kernel_size[0],pooling=pooling[0],sconv=sconv)
         self.conv2 = ConvBlock(in_channels=channels[0], out_channels=channels[1],kernel_size=kernel_size[1],pooling=pooling[1],sconv=sconv)
         self.deform = True if deform else False
-        self.conv3 = conv(in_channels=channels[1], out_channels=channels[2],kernel_size=kernel_size[2],pooling=pooling[2],sconv=sconv)
-        self.conv4 = conv(in_channels=channels[2], out_channels=channels[3],kernel_size=kernel_size[3],pooling=pooling[3],sconv=sconv)
+        self.conv3 = conv(in_channels=channels[1], out_channels=channels[2],kernel_size=kernel_size[2],pooling=pooling[2],sconv=sconv,deform=deform)
+        self.conv4 = conv(in_channels=channels[2], out_channels=channels[3],kernel_size=kernel_size[3],pooling=pooling[3],sconv=sconv,deform=deform)
         self.gap = nn.AdaptiveAvgPool2d((1,1))
         self.linear = nn.Linear(channels[3], 50)
         self.norm = nn.InstanceNorm2d(50)
