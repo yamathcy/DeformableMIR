@@ -87,12 +87,13 @@ def evaluation_wandb(logger:WandbLogger, model, train_loader, test_loader, plot_
         if retrain:
             # retrain 
             print(model.children())
-            for param in model.parameters():
-                param.requires_grad = False
+            for params in model.parameters():
+                params.requires_grad = False
             model.output.weight.requires_grad = True
             model.output.bias.requires_grad = True
+            model.retrain=True
             # model.train()
-            fe_trainer = pl.Trainer(max_epochs=epoch,precision=16)
+            fe_trainer = pl.Trainer(max_epochs=10,precision=32)
             model.configure_optimizers(lr=1e-5)
             fe_trainer.fit(model, retrain_loader)
         model.eval()

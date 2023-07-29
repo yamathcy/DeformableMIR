@@ -91,7 +91,7 @@ class PlModel(pl.LightningModule):
     borrowed from 
     https://github.com/bill317996/Singer-identification-in-artist20/blob/master
     """
-    def __init__(self, param, classes_num, class_weights):
+    def __init__(self, param, classes_num, class_weights, retrain):
         super().__init__()
         self.lr = param.lr
         self.num_classes = classes_num
@@ -99,6 +99,7 @@ class PlModel(pl.LightningModule):
         self.net = CNN(param.filters,kernel_size=param.kernel_size,pooling=param.pooling, sconv=param.sconv, num_classes=classes_num,deform=param.deform)
 
         self.class_weights = class_weights
+        self.retrain = retrain
         self.train_acc = Accuracy(num_classes=self.num_classes, average='macro', task='multiclass')
         self.val_acc = Accuracy(num_classes=self.num_classes, average='macro', task='multiclass')
         self.test_acc = Accuracy(num_classes=self.num_classes, average='macro', task='multiclass')
@@ -115,7 +116,10 @@ class PlModel(pl.LightningModule):
         x, y = train_batch
         # print(x.shape)
         out,_ = self(x)
-        class_weights=self.class_weights.to(DEVICE)
+        if self.retrain:
+            class_weights = self.class_weights.to(DEVICE)
+        else: 
+            class_weights = None
         loss = F.cross_entropy(out, y, weight=class_weights)
         self.log('train_loss', loss, on_epoch=True, on_step=False)
         self.log('train_acc', self.train_acc(out, y), on_step=False, on_epoch=True)
