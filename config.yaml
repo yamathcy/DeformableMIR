@@ -1,4 +1,4 @@
-data_dir: 'data'
+data_dir: '/home/ubuntu/DeformableMIR/data'
 experiment_name: 'singing technique classification'
 length: 3.0
 f_max: 8000
