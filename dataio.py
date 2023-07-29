@@ -251,7 +251,7 @@ class AudioDataset(data.Dataset):
     
     def get_class_weights(self,alpha):
         df = self.metadata.copy()
-        df['class'] = df['audio_path'].apply(lambda x: self.class2id[x.split('_')[2]])
+        df['class'] = df['audio_path'].apply(lambda x: self.class2id[x.split('/')[0]])
         list_class = df['class'].values.tolist()
         result_dict = inverse_frequency_dict(list_class,alpha)
         return result_dict
