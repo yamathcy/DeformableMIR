@@ -83,8 +83,6 @@ class CNN(nn.Module):
         return x.squeeze(), feature.squeeze()
     
 
-
-
 class PlModel(pl.LightningModule):
     """
     Baseline model 
@@ -164,7 +162,7 @@ class PlModel(pl.LightningModule):
         """
         self.eval()
         out, _ = self.forward(x)
-        out = torch.softmax(out, dim=1)  # assuming logits has the shape [batch_size, nb_classes]
+        out = torch.softmax(out, dim=0)  # assuming logits has the shape [batch_size, nb_classes]
         out = out.cpu().detach().numpy().copy()
         out = np.squeeze(out)
         return out
