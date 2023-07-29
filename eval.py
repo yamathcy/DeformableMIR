@@ -88,8 +88,8 @@ def evaluation_wandb(logger:WandbLogger, test_loader, model, plot_title, random_
         print(model.children())
         for params in model.parameters():
             params.requires_grad = False
-        model.output.weight.requires_grad = True
-        model.output.bias.requires_grad = True
+        model.net.classifier.weight.requires_grad = True
+        model.net.classifier.bias.requires_grad = True
         model.retrain=True
         # model.train()
         fe_trainer = pl.Trainer(max_epochs=epoch,precision=32)
