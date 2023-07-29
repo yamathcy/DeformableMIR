@@ -30,7 +30,7 @@ def main(param):
     np.random.seed(SEED)
 
     # Logging
-    logger = WandbLogger(name=param.experiment_name, project="Singing technique classification")
+    logger = WandbLogger(name=param.experiment_name, project=param.experiment_name)
     logger.log_hyperparams(param)
     print(hydra.utils.get_original_cwd())
 
