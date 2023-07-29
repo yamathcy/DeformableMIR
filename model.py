@@ -148,7 +148,7 @@ class PlModel(pl.LightningModule):
     def predict(self, x):
         self.eval()
         out, _ = self.forward(x)
-        print(out.shape)
+        # print(out.shape)
         out = torch.argmax(out, dim=0)
         out = out.cpu().detach().numpy().copy()
         # out = np.squeeze(out)
