@@ -94,7 +94,7 @@ class PlModel(pl.LightningModule):
         self.lr = param.lr
         self.num_classes = classes_num
         self.softmax = nn.Softmax(dim=1)
-        self.net = CNN(param.filters,kernel_size=param.kernel_size,pooling=param.pooling, sconv=param.sconv, num_classes=classes_num,deform=param.deform)
+        self.net = CNN(param.filters,kernel_size=param.kernel_size,pooling=param.pooling, sconv=param.sconv, num_classes=classes_num,deform=param.deform,mod=param.mod)
 
         self.class_weights = class_weights
         self.retrain = retrain
