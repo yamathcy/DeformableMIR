@@ -128,7 +128,7 @@ class ConvBlock(nn.Module):
 class DeformConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, pooling=2, modulation=True, sconv=False) -> None:
         super().__init__()
-        self.conv = DeformableConv2d(in_channels,out_channels,kernel_size=kernel_size, sconv=sconv)
+        self.conv = DeformableConv2d(in_channels,out_channels,kernel_size=kernel_size, sconv=sconv, mod=modulation)
         self.norm = nn.InstanceNorm2d(out_channels)
         self.act = nn.ReLU()
         self.pool = nn.MaxPool2d(pooling)
