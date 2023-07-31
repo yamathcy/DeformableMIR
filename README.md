@@ -1,3 +1,3 @@
-# DeformableMI
+# Deformable Convolution for Singing Technique Classification
 
-deformable convolution for technique identification
+Based on WandB and PyTorch Lightning
