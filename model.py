@@ -169,3 +169,4 @@ class PlModel(pl.LightningModule):
         out = out.cpu().detach().numpy().copy()
         out = np.squeeze(out)
         return out
+    
