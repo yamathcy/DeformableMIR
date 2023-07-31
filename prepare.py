@@ -46,7 +46,7 @@ def normalization(sig):
 
 
 # Chunk audio at 3 seconds, rest of slices more than 1 seconds would also be remained
-def partition(aud, max_ms=3000):
+def partition(aud, max_ms=3000, remain=3):
     sig, sr = aud[0], aud[1]
     num_rows, sig_len = sig.shape
     max_len = sr//1000 * max_ms
@@ -57,19 +57,16 @@ def partition(aud, max_ms=3000):
         i += 1
         chunks.append(normalization(sig[:,max_len*i:max_len*(i+1)]))
         sig_len -= max_len
-    if (args.keep and sig_len > max_len/3):
+    if (args.keep and sig_len > max_len/remain):
       chunks.append(normalization(sig[:,max_len*(i+1):]))
 
     return chunks
 
 
 if __name__ == "__main__":
-  unzip_dir = 'data/VocalSet/audio/'
-  zip_dir = 'data/VocalSet/VocalSet.zip'
-  archive = zipfile.ZipFile(zip_dir)
 
-
-  tech_types = ['belt', 'breathy', 'inhaled', 'lip_trill', 'spoken', 'straight', 'trill', 'trillo', 'vibrato', 'vocal_fry', 'fast_forte', 'fast_piano', 'forte', 'messa', 'pp', 'slow_forte', 'slow_piano']
+  tech_types = ['flutterzunge', 'glissando', 'sforzando', 'trill', 'pizzicato', 'staccato', 'tremolo', 'multiphonics', 'sul-tasto/pointicello',
+                 'harmonic-fingering', 'bisbigliando', 'vibrato', 'slap-pitched', 'near-the-board', 'aeolian-and-ordinario', 'brassy', 'backwards']
   # Technique classes that would be utilized in the task
   # Refer: train_singers_technique.txt   
   tech_task_type = ['belt', 'breathy', 'inhaled', 'lip_trill', 'spoken', 'straight', 'trill', 'trillo', 'vibrato', 'vocal_fry']
