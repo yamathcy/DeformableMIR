@@ -62,7 +62,7 @@ def main(param):
     model =PlModel(param=param,classes_num=10,class_weights=class_weights,retrain=False)
     model.train()
 
-    early_stop_callback = EarlyStopping(monitor="val_loss", min_delta=0.00, patience=5, verbose=False, mode="min")
+    early_stop_callback = EarlyStopping(monitor="val_loss", min_delta=0.00, patience=10, verbose=False, mode="min")
     trainer = pl.Trainer(max_epochs=param.epoch, default_root_dir='data/models/',precision=32, check_val_every_n_epoch=5, logger=logger, callbacks=[early_stop_callback])
     trainer.fit(model,train_dataloaders=train_loader,val_dataloaders=valid_loader)
     
