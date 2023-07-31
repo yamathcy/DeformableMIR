@@ -6,6 +6,5 @@ python main.py sconv=True deform=False retrain=True experiment_name='separable c
 python main.py sconv=False deform=False retrain=True experiment_name='separable conv'
 python main.py sconv=False deform=False retrain=True experiment_name='CNN crt'
 python main.py sconv=False deform=False retrain=False experiment_name='CNN'
-python main.py sconv=True deform=True retrain=True kernel_size=[5,5,5,5] experiment_name='dcnv3 crt 5555'
-python main.py sconv=True deform=True retrain=True kernel_size=[(5,1),(15,1),(1,5),(1,15)] experiment_name='dcnv3 crt oblong'
-python main.py sconv=True deform=True retrain=True kernel_size=[3,5,3,5] experiment_name='dcnv3 crt same_amount'
+python main.py sconv=False deform=False retrain=False kernel_size='[(4,1),(16,1),(1,6),(1,16)]' pooling='[2,2,2,2]' experiment_name='OblongCNN'
+python main.py sconv=False deform=True retrain=True kernel_size='[(4,1),(16,1),(1,6),(1,16)]' pooling='[2,2,2,2]' experiment_name='OblongDeformableCNN'
