@@ -25,10 +25,10 @@ class_num: 10
 conv_dropout: 0.1
 retrain: False
 layer_num: 4
-kernel_size: [3, 3, 3, 3]
+kernel_size: [(4,1),(16,1) , (1,4), (1,16)]
 stride: [1, 1, 1, 1]
 filters: [32, 64, 128, 256]
-pooling: [2,2,1,1]
+pooling: [4,4,2,2]
 n_mels: 160
 deform: True
 sconv: True
