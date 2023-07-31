@@ -137,6 +137,105 @@ class DeformConvBlock(nn.Module):
         x = self.pool(self.act(self.norm(self.conv(x))))
         return x
 
+# class Conv_Oblong(BaseModel):
+#     # oblong shape kernel
+#     def __init__(self, input_channels, output_channels, vertical_shape, horizontal_shape, pool_size, drop_out=0.3, deform=False):
+#         super(Conv_Oblong, self).__init__()
+#         if deform:
+#             self.conv = DeformableConv2d(input_channels, output_channels, kernel_size=(vertical_shape, horizontal_shape),
+#                               padding=[vertical_shape//2, horizontal_shape // 2])
+             
+#         else:
+#             self.conv = nn.Conv2d(input_channels, output_channels, (vertical_shape, horizontal_shape),
+#                               padding=[vertical_shape//2, horizontal_shape // 2])
+            
+
+#         self.bn = nn.BatchNorm2d(output_channels)
+#         self.relu = nn.ReLU()
+#         self.pool_size=pool_size
+#         if pool_size is None:
+#             self.maxpool = nn.Identity()
+#         else:
+#             self.maxpool= nn.MaxPool2d(pool_size)
+#         self.dropout = nn.Dropout(drop_out)
+
+#     def forward(self, x):
+#         x = self.relu(self.bn(self.conv(x)))
+#         freq = x.size(2)
+        
+#         out = self.maxpool(x)
+#         out = self.dropout(out)
+#         out = out.squeeze(2)
+#         return out
+
+class MultiResolutionSpec(nn.Module):
+    def __init__(self, win_length_list=[2048, 1024, 512], hop_size=512, power=1.0,
+                 normalized=False):
+        self.stacked_channels = len(win_length_list)
+        self.n_fft_list = win_length_list
+        self.win_length_list = win_length_list
+        self.hop_size = hop_size
+        self.power = power
+        self.normalized = normalized
+
+        """
+        Inputs:
+            c_in - Number of input feature maps from the previous layers
+            c_red - Dictionary with keys "m" and "l" specifying the output of the dimensionality reducing s convolutions
+            c_out - Dictionary with keys "s", "m", "l", and "max"
+            act_fn - Activation class constructor (e.g. nn.ReLU)
+        """
+        super(MultiResolutionSpec, self).__init__()
+        self.layer_list = []
+        self.n_fft = max(self.win_length_list)
+        self.first_layer = nn.Sequential()
+        self.first_layer.add_module('spec', torchaudio.transforms.Spectrogram(n_fft=self.n_fft, win_length=self.win_length_list[0],
+                                                  hop_length=hop_size, pad=0,
+                                                  window_fn=torch.hann_window,
+                                                  power=self.power, normalized=self.normalized, wkwargs=None),)
+        self.first_layer.add_module('to_db', torchaudio.transforms.AmplitudeToDB())
+        #self.first_layer.add_module('channel', GenerateChannnelDim())
+
+        self.second_layer = nn.Sequential()
+        self.second_layer.add_module('spec', torchaudio.transforms.Spectrogram(n_fft=self.n_fft,
+                                                                              win_length=self.win_length_list[1],
+                                                                              hop_length=hop_size, pad=0,
+                                                                              window_fn=torch.hann_window,
+                                                                              power=self.power,
+                                                                              normalized=self.normalized,
+                                                                              wkwargs=None), )
+        self.second_layer.add_module('to_db', torchaudio.transforms.AmplitudeToDB())
+        #self.second_layer.add_module('channel', GenerateChannnelDim())
+
+        self.third_layer = nn.Sequential()
+        self.third_layer.add_module('spec', torchaudio.transforms.Spectrogram(n_fft=self.n_fft,
+                                                                              win_length=self.win_length_list[2],
+                                                                              hop_length=hop_size, pad=0,
+                                                                              window_fn=torch.hann_window,
+                                                                              power=self.power,
+                                                                              normalized=self.normalized,
+                                                                              wkwargs=None), )
+        self.third_layer.add_module('to_db', torchaudio.transforms.AmplitudeToDB())
+        #self.third_layer.add_module('channel', GenerateChannnelDim())
+
+        # for win_length in self.win_length_list:
+        #     if win_length == self.n_fft: continue
+        #     self.layer_list.append(
+        #         torchaudio.transforms.Spectrogram(n_fft=self.n_fft, win_length=win_length,
+        #                                           hop_length=None, pad=0,
+        #                                           window_fn=torch.hann_window,
+        #                                           power=self.power, normalized=self.normalized, wkwargs=None),
+        #     )
+
+    def forward(self,x):
+        spec1 = self.first_layer(x)
+        spec2 = self.second_layer(x)
+        spec3 = self.third_layer(x)
+        # print(spec1.shape, spec2.shape, spec3.shape)
+        stacked = torch.cat([spec1, spec2, spec3], 1)
+        return stacked
+    
+    
 
 class MultiResolutionMelSpec(nn.Module):
     def __init__(self, win_length_list=[2048, 1024, 512], n_mels=160, hop_size=512, power=1.0,

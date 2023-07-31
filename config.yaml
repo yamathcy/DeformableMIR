@@ -34,3 +34,4 @@ deform: True
 sconv: True
 mod: True
 alpha: 0.2
+mel: True

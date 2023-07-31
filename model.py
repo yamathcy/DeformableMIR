@@ -19,10 +19,13 @@ def conv(deform,**kwrds):
     
 
 class CNN(nn.Module):
-    def __init__(self, channels, kernel_size, pooling=[2,2,2,2],sconv=True,num_classes=10,deform=False,mod=True):
+    def __init__(self, channels, kernel_size, pooling=[2,2,2,2],sconv=True,num_classes=10,deform=False,mod=True ,mel=False):
         super().__init__()
         # print(channels)
-        self.inp = MultiResolutionMelSpec(n_mels=128)
+        if mel:
+            self.inp = MultiResolutionMelSpec(n_mels=128)
+        else:
+            self.inp = MultiResolutionSpec()
         self.conv1 = ConvBlock(in_channels=3, out_channels=channels[0],kernel_size=kernel_size[0],pooling=pooling[0],sconv=sconv)
         self.conv2 = ConvBlock(in_channels=channels[0], out_channels=channels[1],kernel_size=kernel_size[1],pooling=pooling[1],sconv=sconv)
         self.deform = True if deform else False
@@ -94,7 +97,7 @@ class PlModel(pl.LightningModule):
         self.lr = param.lr
         self.num_classes = classes_num
         self.softmax = nn.Softmax(dim=1)
-        self.net = CNN(param.filters,kernel_size=param.kernel_size,pooling=param.pooling, sconv=param.sconv, num_classes=classes_num,deform=param.deform,mod=param.mod)
+        self.net = CNN(param.filters,kernel_size=param.kernel_size,pooling=param.pooling, sconv=param.sconv, num_classes=classes_num,deform=param.deform,mod=param.mod,mel=param.mel)
 
         self.class_weights = class_weights
         self.retrain = retrain
