@@ -106,7 +106,7 @@ class DeformableConv2d(nn.Module):
     
 
 class ConvBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, pooling=2, padding=1, sconv=False) -> None:
+    def __init__(self, in_channels, out_channels, kernel_size, pooling=2, padding=1, sconv=False, mod=False, deform=False) -> None:
         super().__init__()
         if sconv:
             self.conv = SeparableConv2d(in_channels=in_channels,
