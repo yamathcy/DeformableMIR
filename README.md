@@ -4,7 +4,19 @@ Based on WandB and PyTorch Lightning
 
 Modified data preprocessing to [MARBLE Benchmark](https://github.com/a43992899/MARBLE-Benchmark)
 
-To run the code: 
+Preparation
+1. Download VocalSet from https://zenodo.org/record/1193957
+2. run the code
+   
+```
+python prepare.py
+```
+Then, split files will be created.
+
+Main program
+```
+python main.py
+```
 
 
 Reference:
